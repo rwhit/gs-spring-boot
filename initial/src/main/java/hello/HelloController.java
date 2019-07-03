@@ -10,5 +10,13 @@ public class HelloController {
     public String index() {
         return "Greetings from Spring Boot!";
     }
+
+    @RequestMapping("/echo")
+    public String echo(String what) {
+        final String header = "<html><head><link rel=\"stylesheet\" type=\"text/css\" href=\"hello.css\"></head>";
+        final String footer = "</html>";
+        final String body = "<body>" + what + "</body>";
+        return header + body + footer;
+    }
     
 }
