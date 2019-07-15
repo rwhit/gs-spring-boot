@@ -1,3 +1,8 @@
+import React from 'react';
+//not needed it rendering via react-router
+//import ReactDOM from 'react-dom';
+import './ticTacToe.css';
+
 function Square(props) {
     return (
       <button
@@ -120,7 +125,6 @@ class Game extends React.Component {
     const history = this.state.history.slice(0,
                                             this.state.stepNumber + 1);
     const current = history[history.length - 1];
-    const winner = calculateWinner(current.squares);
     const squares = current.squares.slice();
     if (calculateWinner(squares) || squares[i]) {
       return;
@@ -191,13 +195,6 @@ class Game extends React.Component {
   }
 }
 
-// ========================================
-
-ReactDOM.render(
-  <Game />,
-  document.getElementById('root')
-);
-
 function calculateWinner(squares) {
   const lines = [
     [0, 1, 2],
@@ -217,3 +214,5 @@ function calculateWinner(squares) {
   }
   return null;
 }
+
+export default Game
