@@ -1,5 +1,7 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
+// for playing in console only
+import index from './reactStore'
 
 class Index extends React.Component {
   render() {
