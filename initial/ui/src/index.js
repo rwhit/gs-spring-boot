@@ -6,6 +6,7 @@ import store from './store/index';
 import Game from './ticTacToe';
 import Index from './mainIndex.js';
 import ReduxApp from './components/reduxApp.jsx';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 const routing = ({store}) => (
   <Provider store={store}>
