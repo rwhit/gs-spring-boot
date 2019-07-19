@@ -20,5 +20,9 @@ public class HelloController {
         final String body = "<body>" + what + "</body>";
         return header + body + footer;
     }
-    
+
+    @RequestMapping("/greeting")
+    public Greeting greeting(String name) {
+        return new Greeting(0, name);
+    }
 }
