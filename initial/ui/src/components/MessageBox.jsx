@@ -1,9 +1,9 @@
 import React from "react";
 import { connect } from "react-redux";
-import { Modal, ModalBody, ModalFooter, Button } from 'reactstrap';
+import { Modal, ModalHeader, ModalBody, ModalFooter, Button } from 'reactstrap';
 import { clearMessage } from '../actions/index';
 const mapStateToProps = state => {
-  return { message: state.message };
+  return { message: state.message, type: state.messageType };
 };
 
 function mapDispatchToProps(dispatch) {
@@ -29,6 +29,9 @@ class WrappedMessage extends React.Component {
     if (this.props.message != null) {
       return (
         <Modal isOpen={true} size="sm">
+            <ModalHeader>
+                { this.props.type }
+            </ModalHeader>
             <ModalBody>
                 { this.props.message }
             </ModalBody>

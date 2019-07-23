@@ -1,8 +1,9 @@
-import { ADD_ARTICLE, DATA_LOADED, FOUND_BAD_WORD, ERROR_MESSAGE, CLEAR_MESSAGE } from "../constants/action-types";
+import { ADD_ARTICLE, DATA_LOADED, FOUND_BAD_WORD, INFO_MESSAGE, ERROR_MESSAGE, CLEAR_MESSAGE } from "../constants/action-types";
 const initialState = {
   articles: [],
   remoteArticles: [],
-  message: null
+  message: null,
+  messageType: "Info"
 };
 
 function rootReducer(state = initialState, action) {
@@ -20,17 +21,26 @@ function rootReducer(state = initialState, action) {
   }
   if (action.type === FOUND_BAD_WORD) {
     return Object.assign({}, state, {
-      message: "One of the words in the title in not allowed"
+      message: "One of the words in the title in not allowed",
+      messageType: "Warning"
+    });
+  }
+  if (action.type === INFO_MESSAGE) {
+    return Object.assign({}, state, {
+      message: action.payload.message,
+      messageType: action.payload.title ? action.payload.title : "Info"
     });
   }
   if (action.type === ERROR_MESSAGE) {
     return Object.assign({}, state, {
-      message: action.payload
+      message: action.payload,
+      messageType: "Error"
     });
   }
   if (action.type === CLEAR_MESSAGE) {
     const cleared = Object.assign({}, state, {
-      message: null
+      message: null,
+      messageType: "Info"
     });
     console.log('cleared state: ' + cleared);
     return cleared;
