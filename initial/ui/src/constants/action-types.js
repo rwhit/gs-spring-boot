@@ -1,4 +1,5 @@
 export const ADD_ARTICLE = "ADD_ARTICLE";
+export const ARTICLES_LOADED = "ARTICLES_LOADED";
 export const FOUND_BAD_WORD = "FOUND_BAD_WORD";
 export const CLEAR_MESSAGE = "CLEAR_MESSAGE";
 export const ERROR_MESSAGE = "ERROR_MESSAGE";

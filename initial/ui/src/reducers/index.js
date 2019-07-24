@@ -1,4 +1,4 @@
-import { ADD_ARTICLE, DATA_LOADED, FOUND_BAD_WORD, INFO_MESSAGE, ERROR_MESSAGE, CLEAR_MESSAGE } from "../constants/action-types";
+import { ADD_ARTICLE, ARTICLES_LOADED, DATA_LOADED, FOUND_BAD_WORD, INFO_MESSAGE, ERROR_MESSAGE, CLEAR_MESSAGE } from "../constants/action-types";
 const initialState = {
   articles: [],
   remoteArticles: [],
@@ -12,6 +12,11 @@ function rootReducer(state = initialState, action) {
     return Object.assign({}, state, {
       articles: state.articles.concat(action.payload),
       message: null
+    });
+  }
+  if (action.type === ARTICLES_LOADED) {
+    return Object.assign({}, state, {
+      articles: state.articles.concat(action.payload)
     });
   }
   if (action.type === DATA_LOADED) {

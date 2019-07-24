@@ -1,20 +1,28 @@
-import React from "react";
+import  React, { Component} from "react";
 import { connect } from "react-redux";
+import { getArticles } from "../actions";
 
 const mapStateToProps = state => {
   return { articles: state.articles };
 };
 
-const ConnectedList = ({ articles }) => (
-  <ul className="list-group list-group-flush">
-      {articles.map(el => (
-        <li className="list-group-item" key={el.id}>
+class List extends Component {
+
+  componentDidMount() {
+    this.props.getArticles();
+  }
+  
+  render() {
+    return (
+      <ul className="list-group list-group-flush">
+        {this.props.articles.map(el => (
+          <li className="list-group-item" key={el.id}>
             {el.title}
-        </li>
-      ))}
-  </ul>
-);
+          </li>
+        ))}
+      </ul>
+    );
+  }
+}
 
-const List = connect(mapStateToProps)(ConnectedList);
-
-export default List;
+export default connect(mapStateToProps, {getArticles})(List);
