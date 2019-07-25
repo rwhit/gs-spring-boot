@@ -30,7 +30,7 @@ public class ArticleController {
         return articles;
     }
 
-    @CrossOrigin(origins = "http://localhost:3000")
+    @CrossOrigin(origins = { "http://localhost:3000", "http://127.0.0.1:3000"})
     @RequestMapping(method=POST, path="/article")
     public ArticleId addArticle(@RequestBody Article article) {
         articles.add(article);
