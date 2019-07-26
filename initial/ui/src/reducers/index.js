@@ -1,17 +1,28 @@
-import { ADD_ARTICLE, ARTICLES_LOADED, DATA_LOADED, FOUND_BAD_WORD, INFO_MESSAGE, ERROR_MESSAGE, CLEAR_MESSAGE } from "../constants/action-types";
+import { ADD_ARTICLE, ARTICLE_POSTED, ARTICLES_LOADED, DATA_LOADED, FOUND_BAD_WORD, INFO_MESSAGE, ERROR_MESSAGE, CLEAR_MESSAGE } from "../constants/action-types";
 const initialState = {
   articles: [],
   remoteArticles: [],
   message: null,
-  messageType: "Info"
+  messageType: "Info",
+  pendingArticle: null,
+  fetching: false,
 };
 
 function rootReducer(state = initialState, action) {
   console.log('rootReducer(' + JSON.stringify(initialState) + ', ' + JSON.stringify(action) + ')');
+  // TODO switch
   if (action.type === ADD_ARTICLE) {
     return Object.assign({}, state, {
-      articles: state.articles.concat(action.payload),
-      message: null
+      fetching: true,
+      pendingArticle: action.payload
+    });
+  }
+  if (action.type === ARTICLE_POSTED) {
+    // TODO update id
+    return Object.assign({}, state, {
+      fetching: false,
+      articles: state.articles.concat(state.pendingArticle),
+      pendingArticle: null
     });
   }
   if (action.type === ARTICLES_LOADED) {
@@ -39,7 +50,8 @@ function rootReducer(state = initialState, action) {
   if (action.type === ERROR_MESSAGE) {
     return Object.assign({}, state, {
       message: action.payload,
-      messageType: "Error"
+      messageType: "Error",
+      fetching: false
     });
   }
   if (action.type === CLEAR_MESSAGE) {
