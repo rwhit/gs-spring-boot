@@ -1,12 +1,16 @@
 package articles.model;
 
 import java.util.function.Supplier;
+import lombok.Data;
 
+@Data
 public class Article {
-    private final String id;
-    private final String title;
-    private final String author;
-    private final String body;
+    /* hmm - how to make immutable? Lombok support? Jackson? */
+    private /* final */ String id;
+    private /* final */ String title;
+    // TODO update ui so can remove these defaults
+    private /* final */ String author = "";
+    private /* final */ String body = "";
 
     private static Supplier<String> idSupplier = new DefaultIdSupplier(0L);
 
@@ -15,20 +19,26 @@ public class Article {
         idSupplier = newIdSupplier;
         return oldSupplier;
     }
-    
-    public Article(String title, String author, String body)
-    {
+
+    Article() {
+    }
+
+    public Article(String title, String author, String body) {
+        this(title, author, body, generateId());
+    }
+
+    public Article(String title, String author, String body, String id){
         this.title = title;
         this.author = author;
         this.body = body;
-        this.id = generateId();
+        this.id = id;
     }
 
-    private String generateId() {
-        return this.idSupplier.get();
+    private static String generateId() {
+        return idSupplier.get();
     }
 
-    public String getId() {
+    /*    public String getId() {
         return id;
     }
 
@@ -41,7 +51,7 @@ public class Article {
     public String getBody() {
         return body;
     }
-
+    */
     private static class DefaultIdSupplier implements Supplier<String> {
         private long nextId;
 
