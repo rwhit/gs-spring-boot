@@ -18,10 +18,10 @@ const postArticle = article => {
         const status = response.status;
         console.log('postArticle, post not ok, status: ' + status)
         return response.text()
-                       .then(text => ( {error: 'failed to post - http status: ' + status + ', message: "' + text + '"'} ));
+                       .then(text => { throw new Error('failed to post - http status: ' + status + ', message: "' + text + '"' )});
       }
     )
-    .then(json => ({ json }))
+    .then(json => ({ json }) )
     .catch(err => ({ error: 'problem posting (probably a network error/service down): ' + err.message }));
 }
 
