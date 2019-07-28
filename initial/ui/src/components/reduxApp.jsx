@@ -3,6 +3,7 @@ import List from './List';
 import Form from './Form';
 import Post from './Posts';
 import MessageBox from './MessageBox';
+import DevTools from './DevTools';
 
 const ReduxApp = () => (
   <div className="row mt-5">
@@ -20,6 +21,9 @@ const ReduxApp = () => (
       </div>
       <div>
           <MessageBox />
+      </div>
+      <div id="DevTools">
+          <DevTools/>
       </div>
   </div>
 )
