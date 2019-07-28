@@ -1,5 +1,5 @@
 import { takeEvery, put, call } from 'redux-saga/effects';
-import { ARTICLE_POSTED, ERROR_MESSAGE } from '../constants/action-types';
+import { ADD_ARTICLE, ARTICLE_POSTED, ERROR_MESSAGE } from '../constants/action-types';
 
 const postArticle = article => {
   const fetchOptions = ({
@@ -36,5 +36,5 @@ function* postArticleAsync(action) {
 }
 
 export function* watchAddArticle() {
-  yield takeEvery('ADD_ARTICLE', postArticleAsync)
+  yield takeEvery(ADD_ARTICLE, postArticleAsync)
 }
