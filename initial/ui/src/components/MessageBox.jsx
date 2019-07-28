@@ -24,11 +24,12 @@ class WrappedMessage extends React.Component {
     this.props.clearMessage();
     console.log('after clearMessage');
   }
+
   render() {
     console.log("render: message is " + this.props.message);
     if (this.props.message != null) {
       return (
-        <Modal isOpen={true} size="sm">
+        <Modal autoFocus={false} isOpen={true} size="sm">
             <ModalHeader>
                 { this.props.type }
             </ModalHeader>
@@ -36,7 +37,7 @@ class WrappedMessage extends React.Component {
                 { this.props.message }
             </ModalBody>
             <ModalFooter>
-                <Button onClick={this.handleClose}>OK</Button>
+                <Button autoFocus={true} onClick={this.handleClose}>OK</Button>
             </ModalFooter>
         </Modal>
       );
