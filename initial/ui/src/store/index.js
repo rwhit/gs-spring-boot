@@ -3,7 +3,7 @@ import rootReducer from "../reducers/index";
 import { forbiddenWordsMiddleware } from "../middleware";
 import thunk from "redux-thunk";
 import createSagaMiddleware from 'redux-saga'
-import { watchAddArticle } from "../middleware/sagas";
+import { rootSaga } from "../middleware/sagas";
 import DevTools from "../components/DevTools";
 
 // TODO configure based on prod vs. dev
@@ -15,6 +15,6 @@ const store = createStore(
   storeEnhancers(applyMiddleware(forbiddenWordsMiddleware, thunk, sagaMiddleware), DevTools.instrument())
 );
 
-sagaMiddleware.run(watchAddArticle);
+sagaMiddleware.run(rootSaga);
 
 export default store;
