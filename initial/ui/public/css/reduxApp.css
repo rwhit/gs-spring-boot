@@ -1,0 +1,7 @@
+.view-centered-spinner {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+/* Don't do this - breaks animation (which also uses transform) */
+/*    transform: translate(-50%, -50%); */
+}
