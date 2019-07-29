@@ -1,6 +1,5 @@
 import { createStore, applyMiddleware, compose } from "redux";
 import rootReducer from "../reducers/index";
-import { forbiddenWordsMiddleware } from "../middleware";
 import createSagaMiddleware from 'redux-saga'
 import { rootSaga } from "../middleware/sagas";
 import DevTools from "../components/DevTools";
@@ -11,7 +10,7 @@ const sagaMiddleware = createSagaMiddleware();
 const storeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 const store = createStore(
   rootReducer,
-  storeEnhancers(applyMiddleware(forbiddenWordsMiddleware, sagaMiddleware), DevTools.instrument())
+  storeEnhancers(applyMiddleware(sagaMiddleware), DevTools.instrument())
 );
 
 sagaMiddleware.run(rootSaga);

@@ -34,7 +34,9 @@ function rootReducer(state = initialState, action) {
     case FOUND_BAD_WORD:
       return Object.assign({}, state, {
         message: "One of the words in the title in not allowed",
-        messageType: "Warning"
+        messageType: "Warning",
+        fetching: false,
+        pendingArticle: null
       });
     case INFO_MESSAGE:
       return Object.assign({}, state, {

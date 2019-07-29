@@ -1,8 +1,11 @@
 import { takeEvery, put, call, all } from 'redux-saga/effects';
-import { GET_ARTICLES, ARTICLES_LOADED, ADD_ARTICLE, ARTICLE_POSTED,
+import { FOUND_BAD_WORD, GET_ARTICLES, ARTICLES_LOADED, ADD_ARTICLE, ARTICLE_POSTED,
          GET_API_POST, GET_ALL_API_POSTS, DATA_LOADED,
          INFO_MESSAGE, ERROR_MESSAGE } from '../constants/action-types';
-
+import { containsForbiddenWords } from './index';
+//
+// generic GET, POST utils
+//
 const getMessage = url => {
   console.log('GETing ' + url)
   return fetch(url)
@@ -22,6 +25,8 @@ const defaultOnError = error => {
 }
 
 // onSuccess & onError should return simple actions
+// onSuccess takes single arg - json payload response for url
+// onError takes single arg - { error: message }
 function* getMessageAsync(url, onSuccess, onError = defaultOnError) {
   const{ json, error } = yield call(getMessage, url)
   if(json) {
@@ -55,19 +60,32 @@ const postMessage = (url, payload) => {
     .catch(err => ({ error: 'problem POSTing (probably a network error/service down): ' + err.message }));
 }
 
-
-// TODO turn into generic function like getMessageAsync
-function* postArticleAsync(action) {
-  const { json, error } = yield call(postMessage, 'http://localhost:8080/article', action.payload);
+// onSuccess & onError should return simple actions
+// onSuccess takes single arg - json payload response for url
+// onError takes single arg - { error: message }
+function* postMessageAsync(url, payload, onSuccess, onError = defaultOnError) {
+  const { json, error } = yield call(postMessage, url, payload)
   if(json) {
-    yield put({ type: ARTICLE_POSTED, articlId: json })
+    yield put( onSuccess(json) )
   } else {
-    yield put({ type: ERROR_MESSAGE, payload: error })
+    yield put( onError(error) )
   }
 }
 
+//
+// app specific watchers
+//
+
+// pulled this out since had conditional logic
+function* addArticle(action) {
+  if (containsForbiddenWords(action.payload.title))
+    yield put( ({ type: FOUND_BAD_WORD }) )
+  yield* postMessageAsync('http://localhost:8080/article', action.payload,
+                          json => ({ type: ARTICLE_POSTED, articleId: json }))
+}
+
 function* watchAddArticle() {
-  yield takeEvery(ADD_ARTICLE, postArticleAsync)
+  yield takeEvery(ADD_ARTICLE, addArticle)
 }
 
 function* watchGetArticles() {
