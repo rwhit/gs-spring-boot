@@ -40,6 +40,7 @@ dependencies {
     compile("org.springframework:spring-jdbc")
     implementation('org.postgresql:postgresql')
     testCompile("junit:junit")
+    compile 'com.google.guava:guava:28.0-jre'
 
     compileOnly 'org.projectlombok:lombok:1.18.8'
     annotationProcessor 'org.projectlombok:lombok:1.18.8'

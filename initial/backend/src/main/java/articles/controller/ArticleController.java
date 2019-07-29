@@ -3,6 +3,9 @@ package articles.controller;
 import articles.model.Article;
 import articles.model.ArticleId;
 
+import com.google.common.util.concurrent.Uninterruptibles;
+
+import java.time.Duration;
 import java.util.Collection;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,8 +38,17 @@ public class ArticleController {
     @CrossOrigin(origins = { "http://localhost:3000", "http://127.0.0.1:3000"})
     @RequestMapping(method=POST, path="/article")
     public ArticleId addArticle(@RequestBody Article article) {
-        if (article.getTitle().equals("THROW")) {
+        switch(article.getTitle()) {
+        case "THROW":
             throw new RuntimeException("THROW means throw");
+        case "DELAY":
+            Uninterruptibles.sleepUninterruptibly(Duration.ofSeconds(1));
+            break;
+        case "LONG_DELAY":
+            Uninterruptibles.sleepUninterruptibly(Duration.ofSeconds(60));
+            break;
+        default:
+            break;
         }
         jdbcTemplate.update("INSERT INTO articles (id,title,author,body) VALUES (?,?,?,?)",
                             article.getId(),
