@@ -7,6 +7,7 @@ import DevTools from './DevTools';
 
 const ReduxApp = () => (
   <div className="row mt-5">
+      <React.StrictMode>
       <div className="col-md-4 offset-md-1">
           <h2>Articles</h2>
           <List />
@@ -22,6 +23,7 @@ const ReduxApp = () => (
       <div>
           <MessageBox />
       </div>
+      </React.StrictMode>
       <div id="DevTools">
           <DevTools/>
       </div>
@@ -29,4 +31,3 @@ const ReduxApp = () => (
 )
 
 export default ReduxApp;
-  
