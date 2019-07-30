@@ -1,7 +1,9 @@
+
 package articles.controller;
 
 import articles.model.Article;
 import articles.model.ArticleId;
+import articles.model.ArticleResult;
 
 import com.google.common.util.concurrent.Uninterruptibles;
 
@@ -33,6 +35,25 @@ public class ArticleController {
                                               rs.getString("author"),
                                               rs.getString("body"),
                                               rs.getString("id")));
+    }
+
+    @CrossOrigin()
+    @RequestMapping("/articlePage")
+    public ArticleResult getArticlePage(int offset, int pageSize) {
+        StringBuilder query = new StringBuilder();
+        query
+            .append("  SELECT a.id, a.title, a.author,a.body from articles a ")
+            .append("ORDER BY a.title ")
+            .append("LIMIT ? OFFSET ? ");
+        Collection<Article> articles = jdbcTemplate.query(query.toString(),
+                                                          new Object[] {pageSize, offset},
+                                                    (rs, rowNum) ->
+                                                    new Article(rs.getString("title"),
+                                                                rs.getString("author"),
+                                                                rs.getString("body"),
+                                                                rs.getString("id")));
+        int count = jdbcTemplate.query("SELECT count(1) as count from articles", (rs, rowNum) -> rs.getInt("count")).get(0);
+        return new ArticleResult(count, articles);
     }
 
     @CrossOrigin(origins = { "http://localhost:3000", "http://127.0.0.1:3000"})
