@@ -1,6 +1,8 @@
-import { ADD_ARTICLE, ARTICLE_POSTED, ARTICLES_LOADED, DATA_LOADED, FOUND_BAD_WORD, INFO_MESSAGE, ERROR_MESSAGE, CLEAR_MESSAGE } from "../constants/action-types";
+import { ADD_ARTICLE, ARTICLE_POSTED, GET_ARTICLES, ARTICLES_LOADED, DATA_LOADED, FOUND_BAD_WORD, INFO_MESSAGE, ERROR_MESSAGE, CLEAR_MESSAGE } from "../constants/action-types";
 const initialState = {
   articles: [],
+  totalArticles: 0,
+  articleOffset: 0,
   remoteArticles: [],
   message: null,
   messageType: "Info",
@@ -23,9 +25,14 @@ function rootReducer(state = initialState, action) {
         articles: state.articles.concat(state.pendingArticle),
         pendingArticle: null
       });
+    case GET_ARTICLES:
+      return Object.assign({}, state, {
+        articleOffset: action.payload.offset
+      });
     case ARTICLES_LOADED:
       return Object.assign({}, state, {
-        articles: state.articles.concat(action.payload)
+        articles: action.payload.articles,
+        totalArticles: action.payload.total,
       });
     case DATA_LOADED:
       return Object.assign({}, state, {

@@ -90,7 +90,7 @@ function* watchAddArticle() {
 
 function* watchGetArticles() {
   yield takeEvery(GET_ARTICLES,
-                  action => getMessageAsync('http://localhost:8080/articles',
+                  action => getMessageAsync(`http://localhost:8080/articlePage?offset=${action.payload.offset}&pageSize=${action.payload.pageSize}`,
                                             json => ({ type: ARTICLES_LOADED, payload: json })))
 }
 

@@ -17,6 +17,6 @@ export function getData() {
   return { type: GET_ALL_API_POSTS }
 }
 
-export function getArticles() {
-  return { type: GET_ARTICLES }
+export function getArticles(offset, pageSize) {
+  return { type: GET_ARTICLES, payload: { offset, pageSize } }
 }
