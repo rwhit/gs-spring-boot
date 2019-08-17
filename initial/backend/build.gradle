@@ -1,3 +1,7 @@
+import java.nio.file.Files
+import java.nio.file.Path
+import static java.nio.file.StandardCopyOption.REPLACE_EXISTING
+
 buildscript {
     repositories {
         mavenCentral()
@@ -13,10 +17,7 @@ apply plugin: 'idea'
 apply plugin: 'org.springframework.boot'
 apply plugin: 'io.spring.dependency-management'
 
-bootJar {
-    baseName = 'gs-spring-boot'
-    version =  '0.1.0'
-}
+
 
 repositories {
     mavenCentral()
@@ -32,9 +33,7 @@ configurations {
 	}
 }
 dependencies {
-	developmentOnly("org.springframework.boot:spring-boot-devtools")
-}
-dependencies {
+    developmentOnly("org.springframework.boot:spring-boot-devtools")
     compile("org.springframework.boot:spring-boot-starter-web")
     compile("org.springframework.boot:spring-boot-starter-jdbc")
     compile("org.springframework:spring-jdbc")
@@ -46,3 +45,75 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok:1.18.8'
 }
 
+def addWithOutput = "$buildDir/gen-addWith/main"
+
+sourceSets {
+    addWith {
+        output.dir(addWithOutput, builtBy: 'addWith')
+    }
+}
+
+jar {
+  enabled = true
+  duplicatesStrategy 'include'
+  from sourceSets.addWith.output
+}
+
+bootJar {
+    baseName = 'gs-spring-boot'
+    version =  '0.1.0'
+  duplicatesStrategy 'include'
+  from sourceSets.addWith.output
+}
+
+task addWith () {
+  dependsOn compileJava
+  inputs.files(compileJava.outputs.getFiles().getAsFileTree().matching{ include "**/*Build*" })
+  outputs.dir(addWithOutput)
+  doFirst {
+    println "compileJava outputs:"
+    compileJava.outputs.getFiles().getAsFileTree().each { output -> println output }
+    println "=================="
+    compileJava.outputs.getFiles().getAsFileTree().matching{ include "**/*Build*" }.each { output -> println output }
+    println "=================="
+  }
+  doLast {
+    compileJava.outputs.getFiles().getAsFileTree().matching{ include "**/*Build*" }.each { classFile ->
+      println "classFile: " + classFile
+      // TODO this must be a property of javaCompile ...  ??? sourceSets.main.output.classesDirs
+      //def rel = classFile.toPath().relativize(Path.of("$buildDir/classes/java/main"))
+      def rel = Path.of("$buildDir/classes/java/main").relativize(classFile.toPath())
+      def dest = Path.of(addWithOutput).resolve(rel)
+      println "rel:       " + rel
+      println "dest:      " + dest
+      //org.rwhitworth.asm.AddWith.main(file("../buildSrc/build/classes/java/main/org/rwhitworth/asm/AddWith.class").getAbsolutePath(),
+      //                                 "/tmp/foo.class")
+      dest.toFile().getParentFile().mkdirs()
+      org.rwhitworth.asm.AddWith.main(classFile.getAbsolutePath(), dest.toString())
+    //def src = file("build/classes/java/main/articles/model/Article\$ArticleBuilder.class").getAbsolutePath()
+    //def tmp = "/tmp/Article\$ArticleBuilder.class"
+    //org.rwhitworth.asm.AddWith.main(src, tmp)
+    //    Files.move(Path.of(tmp), Path.of(src), REPLACE_EXISTING)
+    }
+  }
+}
+
+classes.dependsOn addWith
+
+task addWidth2(dependsOn:jar, type:JavaExec) {
+  main="org.rwhitworth.asm.AddWith"
+  classpath= files( "/tmp", jar.archivePath )
+  args = [
+           "build/classes/java/main/org/rwhitworth/asm/AddWith.class"
+         ]
+}
+
+task testArticle(dependsOn:jar, type:JavaExec) {
+  doFirst{
+    println("config: " + configurations.runtime)
+    println("source: ")
+    sourceSets.main.runtimeClasspath.each{println "${it}"}
+  }
+  main="articles.model.TestArticle"
+  classpath = sourceSets.main.runtimeClasspath
+}

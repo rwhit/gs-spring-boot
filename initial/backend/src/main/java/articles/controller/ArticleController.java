@@ -48,10 +48,16 @@ public class ArticleController {
         Collection<Article> articles = jdbcTemplate.query(query.toString(),
                                                           new Object[] {pageSize, offset},
                                                     (rs, rowNum) ->
-                                                    new Article(rs.getString("title"),
-                                                                rs.getString("author"),
-                                                                rs.getString("body"),
-                                                                rs.getString("id")));
+                                                          Article.builder()
+                                                          /*
+                                                          .withTitle(rs.getString("title"))
+                                                          .withAuthor(rs.getString("author"))
+                                                          .withBody(rs.getString("body"))
+                                                          .withId(rs.getString("id")).build());*/
+                                                          .title(rs.getString("title"))
+                                                          .author(rs.getString("author"))
+                                                          .body(rs.getString("body"))
+                                                          .id(rs.getString("id")).build());
         int count = jdbcTemplate.query("SELECT count(1) as count from articles", (rs, rowNum) -> rs.getInt("count")).get(0);
         return new ArticleResult(count, articles);
     }

@@ -1,15 +1,25 @@
 package articles.model;
 
 import java.util.function.Supplier;
+import lombok.Builder;
 import lombok.Data;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 
 @Data
+@Builder
+@JsonDeserialize(builder = Article.ArticleBuilder.class)
 public class Article {
     /* hmm - how to make immutable? Lombok support? Jackson? */
+    //@Builder.Default
+    //private /* final */ String id = "3";
+    //private /* final */ String id = generateId();
     private /* final */ String id;
     private /* final */ String title;
     // TODO update ui so can remove these defaults
+    @Builder.Default
     private /* final */ String author = "";
+    @Builder.Default
     private /* final */ String body = "";
 
     private static Supplier<String> idSupplier = new DefaultIdSupplier(0L);
@@ -20,14 +30,15 @@ public class Article {
         return oldSupplier;
     }
 
-    Article() {
-    }
+    //Article() {
+    //}
 
     public Article(String title, String author, String body) {
         this(title, author, body, generateId());
     }
 
-    public Article(String title, String author, String body, String id){
+    public Article(String id, String title, String author, String body){
+        if (id == null || id.length() == 0) throw new RuntimeException("id cannot be empty\ntitle: " + title + "\nauthor: " + author + "\nbody: " + body);
         this.title = title;
         this.author = author;
         this.body = body;
@@ -63,6 +74,10 @@ public class Article {
             return String.valueOf(nextId++);
         }
     }
+    /*
+    @JsonPOJOBuilder(withPrefix = "")
+    public static class ArticleBuilder {
+    }
+    */
 }
 
-        

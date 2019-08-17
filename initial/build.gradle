@@ -1,0 +1,14 @@
+buildscript {
+  repositories {
+    mavenCentral()
+  }
+
+  dependencies {
+    // https://mvnrepository.com/artifact/org.ow2.asm/asm
+    classpath group: 'org.ow2.asm', name: 'asm', version: '7.1'
+  }
+}
+
+task printBuildScriptClasspath {
+    println project.buildscript.configurations.classpath.asPath
+}
