@@ -38,7 +38,7 @@ dependencies {
     compile("org.springframework.boot:spring-boot-starter-jdbc")
     compile("org.springframework:spring-jdbc")
     implementation('org.postgresql:postgresql')
-    testCompile("junit:junit")
+    testCompile('org.testng:testng:6.8')
     compile 'com.google.guava:guava:28.0-jre'
 
     compileOnly 'org.projectlombok:lombok:1.18.8'
@@ -117,3 +117,18 @@ task testArticle(dependsOn:jar, type:JavaExec) {
   main="articles.model.TestArticle"
   classpath = sourceSets.main.runtimeClasspath
 }
+
+task setupTestDb(type: Exec) {
+    commandLine 'bin/setupTestDb.sh'
+}
+
+test {
+  dependsOn setupTestDb
+  useTestNG()
+  doLast {
+    exec {
+      commandLine 'open', reports.getHtml().getEntryPoint().toString()
+    }
+  }
+}
+

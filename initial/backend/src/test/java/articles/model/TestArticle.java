@@ -1,7 +1,12 @@
 package articles.model;
 
+import org.testng.annotations.*;
+
+
 public class TestArticle {
-    public static void main(String... args) {
+
+    @Test(groups = { "unit" })
+    public void basic() {
         Article article = new Article.ArticleBuilder()
             .id("test id")
             .title("test title")
