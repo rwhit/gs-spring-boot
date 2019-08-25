@@ -1,6 +1,7 @@
 import java.nio.file.Files
 import java.nio.file.Path
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING
+import static  org.gradle.api.tasks.testing.TestResult.ResultType;
 
 buildscript {
     repositories {
@@ -38,11 +39,19 @@ dependencies {
     compile("org.springframework.boot:spring-boot-starter-jdbc")
     compile("org.springframework:spring-jdbc")
     implementation('org.postgresql:postgresql')
-    testCompile('org.testng:testng:6.8')
     compile 'com.google.guava:guava:28.0-jre'
 
     compileOnly 'org.projectlombok:lombok:1.18.8'
     annotationProcessor 'org.projectlombok:lombok:1.18.8'
+
+    testCompile('org.testng:testng:6.8')
+    // https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-test
+    testCompile group: 'org.springframework.boot', name: 'spring-boot-test', version: '2.1.7.RELEASE'
+    // https://mvnrepository.com/artifact/org.springframework/spring-test
+    testCompile group: 'org.springframework', name: 'spring-test', version: '5.1.9.RELEASE'
+    testRuntime group: 'org.skyscreamer', name: 'jsonassert', version: '1.5.0'
+
+
 }
 
 def addWithOutput = "$buildDir/gen-addWith/main"
@@ -123,11 +132,26 @@ task setupTestDb(type: Exec) {
 }
 
 test {
+  def succeeded = false
+  def testResult
   dependsOn setupTestDb
-  useTestNG()
+  useTestNG {
+    excludeGroups 'buildScriptTest'
+  }
+  ignoreFailures = true
+  afterSuite { desc, result ->
+    if (!desc.parent) {
+      testResult = result
+      if (result.resultType == ResultType.SUCCESS)
+        succeeded = true
+    }
+  }
   doLast {
-    exec {
-      commandLine 'open', reports.getHtml().getEntryPoint().toString()
+    if (!succeeded) {
+      exec {
+        commandLine 'open', reports.getHtml().getEntryPoint().toString()
+      }
+      throw new TestExecutionException(testResult.toString())
     }
   }
 }
