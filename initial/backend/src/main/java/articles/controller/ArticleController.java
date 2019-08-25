@@ -31,10 +31,10 @@ public class ArticleController {
     public Collection<Article> getArticles() {
         return jdbcTemplate.query("SELECT a.id, a.title, a.author,a.body from articles a",
                                   (rs, rowNum) ->
-                                  new Article(rs.getString("title"),
+                                  new Article(rs.getString("id"),
+                                              rs.getString("title"),
                                               rs.getString("author"),
-                                              rs.getString("body"),
-                                              rs.getString("id")));
+                                              rs.getString("body")));
     }
 
     @CrossOrigin()
