@@ -75,6 +75,14 @@ bootJar {
   from sourceSets.addWith.output
 }
 
+bootRun {
+  if (project.hasProperty('args')) {
+    args project.args.split(',')
+    println "set args - "
+    println project.args.split(',')
+  }
+}
+
 task addWith () {
   dependsOn compileJava
   inputs.files(compileJava.outputs.getFiles().getAsFileTree().matching{ include "**/*Build*" })

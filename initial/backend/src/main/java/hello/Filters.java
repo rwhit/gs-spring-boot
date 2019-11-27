@@ -1,11 +1,21 @@
 package hello;
 
+import hello.model.DelayFilterConfig;
+
+import com.google.common.util.concurrent.Uninterruptibles;
+
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 import org.springframework.stereotype.Component;
+import org.springframework.context.annotation.Profile;
+import org.springframework.core.annotation.Order;
 
 import java.io.IOException;
 import java.io.ByteArrayInputStream;
+import java.util.ArrayList;
+import java.util.List;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
+
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
@@ -22,7 +32,43 @@ public class Filters {
     private static final Logger logger = LoggerFactory.getLogger(Filters.class);
 
     @Component
-    //@Order(2)
+    @Profile("dev")
+    @Order(2)
+    public static class RequestDelayFilter implements Filter {
+
+	private static List<DelayFilterConfig> filters = new ArrayList<>();
+
+	static {
+	    DelayFilterConfig test = DelayFilterConfig.builder()
+		.urlPattern("/DELAYME")
+		.delayMs(1000)
+		.build();
+	    filters.add(test);
+	}
+
+	public void doFilter(ServletRequest request,
+			     ServletResponse response,
+			     FilterChain chain) throws IOException, ServletException {
+            HttpServletRequest req = (HttpServletRequest) request;
+	    filters.stream()
+		.filter(f -> doesMatch(f, req))
+		.findFirst()
+		.ifPresent(f -> delay(f.getDelayMs(), req));
+	    chain.doFilter(request, response);
+	}
+
+	private static boolean doesMatch(DelayFilterConfig filter, HttpServletRequest req) {
+	    return filter.getCompiledUrlPattern().matcher(req.getRequestURI()).matches();
+	}
+
+	private static void delay(long ms, HttpServletRequest req) {
+	    logger.debug("{} matched delay filter, sleeping for {}ms", req.getRequestURI(), ms);
+	    Uninterruptibles.sleepUninterruptibly(ms, MILLISECONDS);
+	}
+    }
+
+    @Component
+    @Order(1)
     public static class RequestResponseLoggingFilter implements Filter {
 
         public final int MAX_BODY = 1000000;
